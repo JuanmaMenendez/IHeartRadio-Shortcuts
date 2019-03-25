@@ -6,6 +6,8 @@
 // @author       Juanma Menendez
 // @match        https://www.iheart.com/*
 // @grant        none
+// @downloadURL https://cdn.jsdelivr.net/gh/JuanmaMenendez/IHeartRadio-Shortcuts/index.js
+// @updateURL https://cdn.jsdelivr.net/gh/JuanmaMenendez/IHeartRadio-Shortcuts/index.js
 // ==/UserScript==
 
 (function () {
@@ -38,7 +40,7 @@
 
         //b :  test message
         if (ev.key === 'c') {
-            window.alert("Update test");
+            window.alert("Update test 1");
             return false;
         }
 
