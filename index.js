@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         IHeartRadio shortcuts 2
+// @name         IHeartRadio shortcuts
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      0.2
 // @description  IHeartRadio shortcuts: Play/Pause, Next song, Playlist relocation
 // @author       Juanma Menendez
 // @match        https://www.iheart.com/*
@@ -37,8 +37,8 @@
 
 
         //b :  test message
-        if (ev.key === 'b') {
-            window.alert("https://www.iheart.com/playlist/collections/perfect-for/activities/concentration/");
+        if (ev.key === 'c') {
+            window.alert("Update test");
             return false;
         }
 
