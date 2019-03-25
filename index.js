@@ -1,20 +1,20 @@
 // ==UserScript==
 // @name         IHeartRadio shortcuts
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  IHeartRadio shortcuts: Play/Pause, Next song, Playlist relocation
 // @author       Juanma Menendez
 // @match        https://www.iheart.com/*
 // @grant        none
-// @downloadURL https://cdn.jsdelivr.net/gh/JuanmaMenendez/IHeartRadio-Shortcuts/index.js
-// @updateURL https://cdn.jsdelivr.net/gh/JuanmaMenendez/IHeartRadio-Shortcuts/index.js
+// @downloadURL https://codepen.io/juanmamenendez15/pen/rRPPJd.js
+// @updateURL https://codepen.io/juanmamenendez15/pen/rRPPJd.js
 // ==/UserScript==
 
 (function () {
     'use strict';
 
 
-    document.onkeydown = function (ev) {
+    document.addEventListener('keydown', function (ev) {
         ev = ev || window.event; // for IE to cover IEs window object
 
         //s || p || space :  play/pause
@@ -23,13 +23,11 @@
             return false;
         }
 
-
         //n :  next song
         if (ev.key === 'n') {
             document.querySelector('div[data-test="mini-player-control-wrap"] button[data-test="skip-button"]').click();
             return false;
         }
-
 
         //f :  relocation to focus playlist
         if (ev.key === 'f') {
@@ -37,13 +35,11 @@
             return false;
         }
 
-
-        //b :  test message
-        if (ev.key === 'c') {
-            window.alert("Update test 1");
+        //a :  test message
+        if (ev.key === 'a') {
+            window.alert("Update test 5");
             return false;
         }
 
-
-    };
+    });
 })();
