@@ -19,7 +19,18 @@
 
         //s || p || space :  play/pause
         if (ev.key === 's' || ev.key === 'p' || ev.key === ' ') {
-            document.querySelector('div[data-test="mini-player-control-wrap"] button[data-test="play-button"]').click();
+
+          let playButton = document.querySelector('div[data-test="mini-player-control-wrap"] button[data-test="play-button"]');
+
+            if (playButton){
+                playButton.click();
+            }
+            else {
+                alert('Does not existe');
+            }
+
+            ev.preventDefault();
+
             return false;
         }
 
