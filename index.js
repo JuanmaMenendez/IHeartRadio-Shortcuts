@@ -10,24 +10,32 @@
 // @updateURL    https://codepen.io/juanmamenendez15/pen/rRPPJd.js
 // ==/UserScript==
 
-'use strict';
+"use strict";
 
-class BaseShortcut {
+class BaseShortcutAbstract {
 
+    //"constructor method" can be invoked for a subclass through the "super()" method but cannot be called directly "new BaseShortcutAbstract()"
     constructor(keysArray, target, preventKeyDefaultAction = false, stopOtherHandlersChecking = true) {
+
+        //abstract Class behavior
+        if (new.target === BaseShortcutAbstract) {
+            throw new TypeError("Forbidden to create BaseShortcutAbstract direct instance, must create a BaseShortcutAbstract subclass instead");
+        }
+
         this.keysArray = keysArray;
         this.target = target;
         this.preventKeyDefaultAction = preventKeyDefaultAction;
         this.stopOtherHandlersChecking = stopOtherHandlersChecking;
     }
 
+    //"abstract" method. Must be implemented for the subclass
     action() {
-        console.log('CANCELARRRR ');
+        throw new Error('action() method must be implemented');
     }
 }
 
 
-class ClickShortcut extends BaseShortcut {
+class ClickShortcut extends BaseShortcutAbstract {
 
     constructor(...params) {
         super(...params);
@@ -46,7 +54,7 @@ class ClickShortcut extends BaseShortcut {
 }
 
 
-class RelocationShortcut extends BaseShortcut {
+class RelocationShortcut extends BaseShortcutAbstract {
 
     constructor(...params) {
         super(...params);
