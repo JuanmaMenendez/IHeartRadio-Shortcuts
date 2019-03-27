@@ -14,10 +14,10 @@
 
 class BaseShortcut {
 
-    constructor(keysArray, target, preventDefault = true, stopOtherHandlersChecking = true) {
+    constructor(keysArray, target, preventKeyDefaultAction = false, stopOtherHandlersChecking = true) {
         this.keysArray = keysArray;
         this.target = target;
-        this.preventDefault = preventDefault;
+        this.preventKeyDefaultAction = preventKeyDefaultAction;
         this.stopOtherHandlersChecking = stopOtherHandlersChecking;
     }
 
@@ -59,7 +59,7 @@ class RelocationShortcut extends BaseShortcut {
 
 
 let clickShortcutsArray = [
-    new ClickShortcut(' ', 'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]'),
+    new ClickShortcut(' ', 'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]', true),
     new ClickShortcut(['s','p'], 'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]'),
     new ClickShortcut('n', 'div[data-test="mini-player-control-wrap"] button[data-test="skip-button"]'),
 ];
@@ -74,12 +74,19 @@ function setListeners(...shortcutsArray) {
     shortcutsArray.forEach((shortcut) => {
 
             document.addEventListener('keydown', function (ev) {
-                ev = ev || window.event; // for IE to cover IEs window object
 
                 if (shortcut.keysArray.includes(ev.key)) {
+
                     shortcut.action();
-                    ev.preventDefault();
-                    ev.stopImmediatePropagation();
+
+                    if (shortcut.preventKeyDefaultAction) {
+                        ev.preventDefault();
+                    }
+
+                    if (shortcut.stopOtherHandlersChecking) {
+                        ev.stopImmediatePropagation();
+                    }
+
                     return false;
                 }
 
