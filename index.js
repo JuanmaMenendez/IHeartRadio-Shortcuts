@@ -60,6 +60,7 @@ class RelocationShortcut extends BaseShortcut {
 
 let clickShortcutsArray = [
     new ClickShortcut(' ', 'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]'),
+    new ClickShortcut(['s','p'], 'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]'),
     new ClickShortcut('n', 'div[data-test="mini-player-control-wrap"] button[data-test="skip-button"]'),
 ];
 
@@ -75,7 +76,7 @@ function setListeners(...shortcutsArray) {
             document.addEventListener('keydown', function (ev) {
                 ev = ev || window.event; // for IE to cover IEs window object
 
-                if (ev.key === shortcut.keysArray) {
+                if (shortcut.keysArray.includes(ev.key)) {
                     shortcut.action();
                     ev.preventDefault();
                     ev.stopImmediatePropagation();
