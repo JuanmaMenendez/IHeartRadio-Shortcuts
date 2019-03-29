@@ -10,99 +10,128 @@
 // @updateURL    https://codepen.io/juanmamenendez15/pen/rRPPJd.js
 // ==/UserScript==
 
-"use strict";
 
-class BaseShortcutAbstract {
+(function () {
 
-    //"constructor method" can be invoked for a subclass through the "super()" method but cannot be called directly "new BaseShortcutAbstract()"
-    constructor(keysArray, target, preventKeyDefaultAction = false, stopOtherHandlersChecking = true) {
+    "use strict";
 
-        //abstract Class behavior
-        if (new.target === BaseShortcutAbstract) {
-            throw new TypeError("Forbidden to create BaseShortcutAbstract direct instance, must create a BaseShortcutAbstract subclass instead");
+    class BaseShortcutAbstract {
+
+        //"constructor method" can be invoked for a subclass through the "super()" method but cannot be called directly "new BaseShortcutAbstract()"
+        constructor(keysArray, target, skipInsideTextZones = true, stopOtherHandlersChecking = true, preventKeyDefaultAction = false) {
+
+            //abstract Class behavior
+            if (new.target === BaseShortcutAbstract) {
+                throw new TypeError("Forbidden to create BaseShortcutAbstract direct instance, must create a BaseShortcutAbstract subclass instead");
+            }
+
+            this.keysArray = keysArray;
+            this.target = target;
+            this.preventKeyDefaultAction = preventKeyDefaultAction;
+            this.stopOtherHandlersChecking = stopOtherHandlersChecking;
+            this.skipInsideTextZones = skipInsideTextZones;
         }
 
-        this.keysArray = keysArray;
-        this.target = target;
-        this.preventKeyDefaultAction = preventKeyDefaultAction;
-        this.stopOtherHandlersChecking = stopOtherHandlersChecking;
-    }
-
-    //"abstract" method. Must be implemented for the subclass
-    action() {
-        throw new Error('action() method must be implemented');
-    }
-}
-
-
-class ClickShortcut extends BaseShortcutAbstract {
-
-    constructor(...params) {
-        super(...params);
-    }
-
-    action() {
-        let node = document.querySelector(this.target);
-
-        if (node) {
-            node.click();
-        }
-        else {
-            alert('Does not exist');
+        //"abstract" method. Must be implemented for the subclass
+        action() {
+            throw new Error('action() method must be implemented');
         }
     }
-}
 
 
-class RelocationShortcut extends BaseShortcutAbstract {
+    class ClickShortcut extends BaseShortcutAbstract {
 
-    constructor(...params) {
-        super(...params);
+        constructor(...params) {
+            super(...params);
+        }
+
+        action() {
+            let node = document.querySelector(this.target);
+
+            if (node) {
+                node.click();
+            }
+            else {
+                alert('Does not exist');
+            }
+        }
     }
 
-    action() {
-        window.location.href = this.target;
+
+    class RelocationShortcut extends BaseShortcutAbstract {
+
+        constructor(...params) {
+            super(...params);
+        }
+
+        action() {
+            window.location.href = this.target;
+        }
     }
-}
 
 
-let clickShortcutsArray = [
-    new ClickShortcut(' ', 'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]', true),
-    new ClickShortcut(['s','p'], 'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]'),
-    new ClickShortcut('n', 'div[data-test="mini-player-control-wrap"] button[data-test="skip-button"]'),
-];
+    let clickShortcutsArray = [
+        new ClickShortcut(' ', 'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]', true, true, true),
+        new ClickShortcut(['s', 'p'], 'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]'),
+        new ClickShortcut('n', 'div[data-test="mini-player-control-wrap"] button[data-test="skip-button"]'),
+    ];
 
-let relocationShortcutsArray = [
-    new RelocationShortcut('f', 'https://www.iheart.com/playlist/collections/perfect-for/activities/concentration/'),
-];
+    let relocationShortcutsArray = [
+        new RelocationShortcut('f', 'https://www.iheart.com/playlist/collections/perfect-for/activities/concentration/'),
+    ];
 
 
-function setListeners(...shortcutsArray) {
+    let isInsideTextZone = (() => {
 
-    shortcutsArray.forEach((shortcut) => {
+        let excludedTagsArrays = ['TEXTAREA'];
 
-            document.addEventListener('keydown', function (ev) {
+        return (ev) => {
 
-                if (shortcut.keysArray.includes(ev.key)) {
+            if (excludedTagsArrays.includes(ev.target.tagName) ||
+                (ev.target.attributes && ev.target.attributes.type && ev.target.attributes.type.value === 'text')) {
+                return true;
+            }
+        }
 
-                    shortcut.action();
+    })();
 
-                    if (shortcut.preventKeyDefaultAction) {
-                        ev.preventDefault();
+
+    function setListeners(...shortcutsArray) {
+
+        shortcutsArray.forEach((shortcut) => {
+
+                document.addEventListener('keydown', function (ev) {
+
+
+                    if (shortcut.keysArray.includes(ev.key)) {
+
+                        if (shortcut.skipInsideTextZones) {
+                            if (isInsideTextZone(ev)) {
+                                return;
+                            }
+                        }
+
+                        shortcut.action();
+
+                        if (shortcut.preventKeyDefaultAction) {
+                            ev.preventDefault();
+                        }
+
+                        if (shortcut.stopOtherHandlersChecking) {
+                            ev.stopImmediatePropagation();
+                        }
+
+                        return false;
                     }
 
-                    if (shortcut.stopOtherHandlersChecking) {
-                        ev.stopImmediatePropagation();
-                    }
+                });
 
-                    return false;
-                }
+            }
+        )
 
-            });
+    }
 
-        }
-    )
+    setListeners(...clickShortcutsArray, ...relocationShortcutsArray);
 
-}
 
-setListeners(...clickShortcutsArray, ...relocationShortcutsArray);
+})();
