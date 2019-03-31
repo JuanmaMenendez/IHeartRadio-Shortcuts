@@ -71,9 +71,15 @@
 
 
     let clickShortcutsArray = [
-        new ClickShortcut(' ', 'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]', true, true, true),
-        new ClickShortcut(['s', 'p'], 'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]'),
-        new ClickShortcut('n', 'div[data-test="mini-player-control-wrap"] button[data-test="skip-button"]'),
+
+        // Play || Pause || Stop
+        new ClickShortcut(' ',                'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]', true, true, true), // space key
+        new ClickShortcut(['s', 'p'],         'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]'),
+        new ClickShortcut(['MediaPlayPause'], 'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]', false), //Special Key
+
+        // Next Song
+        new ClickShortcut('n',              'div[data-test="mini-player-control-wrap"] button[data-test="skip-button"]'),
+        new ClickShortcut('MediaTrackNext', 'div[data-test="mini-player-control-wrap"] button[data-test="skip-button"]', false),
     ];
 
     let relocationShortcutsArray = [
