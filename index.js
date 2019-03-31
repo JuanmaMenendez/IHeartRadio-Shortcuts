@@ -87,18 +87,14 @@
     ];
 
 
-    let isInsideTextZone = (() => {
+    let isInsideATextZone = (() => {
 
         let excludedTagsArrays = ['TEXTAREA'];
+        let excludedInputTypesArray = ['text', 'password', 'search'];
 
         return (ev) => {
-
-            if (excludedTagsArrays.includes(ev.target.tagName) ||
-                (ev.target.attributes && ev.target.attributes.type &&
-                    (ev.target.attributes.type.value === 'text' || ev.target.attributes.type.value === 'password'))
-            ) {
-                return true;
-            }
+            return !!(excludedTagsArrays.includes(ev.target.tagName) ||
+                (ev.target.attributes && ev.target.attributes.type && excludedInputTypesArray.includes(ev.target.attributes.type.value)));
         }
 
     })();
@@ -114,7 +110,7 @@
                     if (shortcut.keysArray.includes(ev.key)) {
 
                         if (shortcut.skipInsideTextZones) {
-                            if (isInsideTextZone(ev)) {
+                            if (isInsideATextZone(ev)) {
                                 return;
                             }
                         }
