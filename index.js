@@ -73,7 +73,7 @@
     let clickShortcutsArray = [
 
         // Play || Pause || Stop
-        new ClickShortcut([' '],                'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]', true, true, true), // space key
+        new ClickShortcut([' '],              'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]', true, true, true), // space key
         new ClickShortcut(['s', 'p'],         'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]'),
         new ClickShortcut(['MediaPlayPause'], 'div[data-test="mini-player-control-wrap"] button[data-test="play-button"]', false), //Special Key
 
@@ -87,55 +87,59 @@
     ];
 
 
-    let isInsideATextZone = (() => {
-
-        let excludedTagsArrays = ['TEXTAREA'];
-        let excludedInputTypesArray = ['text', 'password', 'search'];
-
-        return (ev) => {
-            return !!(excludedTagsArrays.includes(ev.target.tagName) ||
-                (ev.target.attributes && ev.target.attributes.type && excludedInputTypesArray.includes(ev.target.attributes.type.value)));
-        }
-
-    })();
 
 
-    function setListeners(...shortcutsArray) {
+    class mainController {
 
-        shortcutsArray.forEach((shortcut) => {
+        static setListeners(...shortcutsArray) {
 
-                document.addEventListener('keydown', function (ev) {
+            shortcutsArray.forEach((shortcut) => {
+
+                    document.addEventListener('keydown', function (ev) {
 
 
-                    if (shortcut.keysArray.includes(ev.key)) {
+                        if (shortcut.keysArray.includes(ev.key)) {
 
-                        if (shortcut.skipInsideTextZones) {
-                            if (isInsideATextZone(ev)) {
+                            if (shortcut.skipInsideTextZones && mainController.isInsideATextZone(ev)) {
                                 return;
                             }
+
+                            shortcut.action();
+
+                            if (shortcut.preventKeyDefaultAction) {
+                                ev.preventDefault();
+                            }
+
+                            if (shortcut.stopOtherHandlersChecking) {
+                                ev.stopImmediatePropagation();
+                            }
+
+                            return false;
                         }
 
-                        shortcut.action();
+                    });
 
-                        if (shortcut.preventKeyDefaultAction) {
-                            ev.preventDefault();
-                        }
+                }
+            )
 
-                        if (shortcut.stopOtherHandlersChecking) {
-                            ev.stopImmediatePropagation();
-                        }
+        }
 
-                        return false;
-                    }
+        static isInsideATextZone = (() => {
 
-                });
+            let excludedTagsArrays = ['TEXTAREA'];
+            let excludedInputTypesArray = ['text', 'password', 'search'];
 
+            return (ev) => {
+                return !!(excludedTagsArrays.includes(ev.target.tagName) ||
+                    (ev.target.attributes && ev.target.attributes.type && excludedInputTypesArray.includes(ev.target.attributes.type.value)));
             }
-        )
+
+        })()
+
 
     }
 
-    setListeners(...clickShortcutsArray, ...relocationShortcutsArray);
+    mainController.setListeners(...clickShortcutsArray, ...relocationShortcutsArray);
 
 
 })();
